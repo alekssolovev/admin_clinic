@@ -1,14 +1,12 @@
 package com.springlessons.clinicadmin.controller;
 
 import com.springlessons.clinicadmin.dto.ClinicDto;
-import com.springlessons.clinicadmin.entity.Specialization;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import com.springlessons.clinicadmin.entity.Doctor;
+import com.springlessons.clinicadmin.repository.DoctorRepository;
+import com.springlessons.clinicadmin.service.DoctorService;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // POST https://domain.com/clinic
@@ -20,6 +18,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/clinic")
 public class ClinicController {
+    private final DoctorRepository doctorRepository;
+    private final DoctorService doctorService;
+
+    public ClinicController(DoctorRepository doctorRepository, DoctorService doctorService) {
+        this.doctorRepository = doctorRepository;
+        this.doctorService = doctorService;
+    }
+
     // "{"id": 34, "name": "Больница №234" }"
     // RequestBody - данные будут переданы в теле сообщения json строкой
     // (required = false) - тело сообщения м.б пустым
@@ -100,6 +106,15 @@ public class ClinicController {
         return new ClinicDto();
     }
 
+    @GetMapping
+    public List<String> specializationDtoResponse(DoctorService doctorService,
+                                                  Doctor doctor){
+        //List<String> specializations = new ArrayList<>();
+        List<String> responseDto = new ArrayList<>();
+        responseDto.add(doctorService.getInactiveDoctors(doctorRepository,doctor));
+                responseDto.add(doctorService.getActiveDoctors(doctorRepository,doctor));
+        return responseDto;
+    }
 
 }
 
